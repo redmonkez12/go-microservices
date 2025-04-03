@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"os"
 	"time"
-	_ "github.com/jackc/pgconn"
-	_ "github.com/jackc/pgx/v5"
+
+	// Replace these imports with the correct ones for v5
+	_ "github.com/jackc/pgx/v5/stdlib" // This is the correct import for v5 to use with database/sql
 )
 
 const webPort = "80"
@@ -17,25 +18,27 @@ const webPort = "80"
 var counts int64
 
 type Config struct {
-	DB *sql.DB
-	Models data.Models	
+	DB     *sql.DB
+	Models data.Models
 }
 
 func main() {
 	log.Println("Starting authentication service")
 
+	// connect to DB
 	conn := connectToDB()
 	if conn == nil {
 		log.Panic("Can't connect to Postgres!")
 	}
 
+	// set up config
 	app := Config{
-		DB: conn,
+		DB:     conn,
 		Models: data.New(conn),
 	}
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", webPort),
+		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.routes(),
 	}
 
@@ -46,6 +49,8 @@ func main() {
 }
 
 func openDB(dsn string) (*sql.DB, error) {
+	// For pgx v5, you can continue using sql.Open with "pgx" as the driver name
+	// as long as you've imported github.com/jackc/pgx/v5/stdlib
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
 		return nil, err
@@ -64,12 +69,12 @@ func connectToDB() *sql.DB {
 
 	for {
 		connection, err := openDB(dsn)
-
 		if err != nil {
 			log.Println("Postgres not yet ready ...")
+			log.Println(err)
 			counts++
 		} else {
-			log.Println("Connected to Postgres")
+			log.Println("Connected to Postgres!")
 			return connection
 		}
 
@@ -78,7 +83,7 @@ func connectToDB() *sql.DB {
 			return nil
 		}
 
-		log.Println("Backing off for two seconds...")
+		log.Println("Backing off for two seconds....")
 		time.Sleep(2 * time.Second)
 		continue
 	}

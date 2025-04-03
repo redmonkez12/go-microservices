@@ -65,7 +65,7 @@
                 action: "auth",
                 auth: {
                     email: "admin@example.com",
-                    password: "verysecret123",
+                    password: "verysecret",
                 },
             };
 
@@ -78,7 +78,7 @@
                 headers,
             }
 
-            fetch("http:\/\/localhost:8080", body)
+            fetch("http:\/\/localhost:8080/handle", body)
             .then(response => response.json())
             .then(data => {
                 sent.innerHTML = JSON.stringify(payload, undefined, 4);
