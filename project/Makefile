@@ -38,13 +38,13 @@ build_authentication:
 ## build_front: builds the front end binary
 build_front:
 	@echo Building front end binary...
-	cd ..\front-end && set CGO_ENABLED=0&& set GOOS=windows&& go build -o $(FRONT_END_BINARY) ./cmd/web
+	cd ..\frontend && set CGO_ENABLED=0&& set GOOS=windows&& go build -o $(FRONT_END_BINARY) ./cmd/web
 	@echo Done!
 
 ## start: starts the front end
 start: build_front
 	@echo Starting front end
-	cd ..\front-end && start /B $(FRONT_END_BINARY) &
+	cd ..\frontend && start /B $(FRONT_END_BINARY) &
 
 ## stop: stop the front end
 stop:
